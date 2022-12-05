@@ -1,0 +1,129 @@
+### Read All Resources
+GET http://localhost:3010/resource
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjMxMDc0MTYxfQ.onKp43E4x6N_ritENKhdq4dEQuOInnPjcMcLL5YWboU
+
+
+### Read Resource Content By Type
+### type : admin_email, header_logo, footer_logo, notice_carousel, org_carousel
+GET http://localhost:3010/resource/notice_carousel
+
+### For Test
+POST http://localhost:3010/resource
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjMwNDU2MzgxfQ.n-9VtD7s9fSPo5PpYO-sb8OnOSyAoKXbKO0-eOnSHoo
+content-type: application/json
+
+{
+    "type": "admin_email",
+    "content_id" : 0,
+    "content": "mpnaroo@naver.com"
+}
+
+### For Test
+POST http://localhost:3010/resource
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjMwNDU2MzgxfQ.n-9VtD7s9fSPo5PpYO-sb8OnOSyAoKXbKO0-eOnSHoo
+content-type: application/json
+
+{
+    "type": "header_logo",
+    "content_id" : 0,
+    "content": "https://naroo.or.kr/theme/mapo/img/logo.png"
+}
+
+### For Test
+POST http://localhost:3010/resource
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjMwNDU2MzgxfQ.n-9VtD7s9fSPo5PpYO-sb8OnOSyAoKXbKO0-eOnSHoo
+content-type: application/json
+
+{
+    "type": "footer_logo",
+    "content_id" : 0,
+    "content": "https://naroo.or.kr/theme/mapo/img/logo_footer.png"
+}
+
+### For Test
+POST http://localhost:3010/resource
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjMwNDU2MzgxfQ.n-9VtD7s9fSPo5PpYO-sb8OnOSyAoKXbKO0-eOnSHoo
+content-type: application/json
+
+{
+    "type": "org_carousel",
+    "content_id" : 0,
+    "content": "https://naroo.or.kr/theme/mapo/img/site_01.gif"
+}
+
+### For Test
+POST http://localhost:3010/resource
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjMwNDU2MzgxfQ.n-9VtD7s9fSPo5PpYO-sb8OnOSyAoKXbKO0-eOnSHoo
+content-type: application/json
+
+{
+    "type": "org_carousel",
+    "content_id" : 1,
+    "content": "https://naroo.or.kr/theme/mapo/img/site_02.gif"
+}
+
+### For Test
+POST http://localhost:3010/resource
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjMwNDU2MzgxfQ.n-9VtD7s9fSPo5PpYO-sb8OnOSyAoKXbKO0-eOnSHoo
+content-type: application/json
+
+{
+    "type": "org_carousel",
+    "content_id" : 2,
+    "content": "https://naroo.or.kr/theme/mapo/img/site_03.gif"
+}
+
+### For Test
+POST http://localhost:3010/resource
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjMwNDU2MzgxfQ.n-9VtD7s9fSPo5PpYO-sb8OnOSyAoKXbKO0-eOnSHoo
+content-type: application/json
+
+{
+    "type": "org_carousel",
+    "content_id" : 3,
+    "content": "https://naroo.or.kr/theme/mapo/img/site_04.gif"
+}
+
+### For Test
+POST http://localhost:3010/resource
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjMwNDU2MzgxfQ.n-9VtD7s9fSPo5PpYO-sb8OnOSyAoKXbKO0-eOnSHoo
+content-type: application/json
+
+{
+    "type": "org_carousel",
+    "content_id" : 4,
+    "content": "https://naroo.or.kr/theme/mapo/img/site_05.gif"
+}
+
+### For Test
+POST http://localhost:3010/resource
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjMwNDU2MzgxfQ.n-9VtD7s9fSPo5PpYO-sb8OnOSyAoKXbKO0-eOnSHoo
+content-type: application/json
+
+{
+    "type": "org_carousel",
+    "content_id" : 5,
+    "content": "https://naroo.or.kr/theme/mapo/img/site_06.gif"
+}
+
+### For Test
+POST http://localhost:3010/resource
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjMwNDU2MzgxfQ.n-9VtD7s9fSPo5PpYO-sb8OnOSyAoKXbKO0-eOnSHoo
+content-type: application/json
+
+{
+    "type": "org_carousel",
+    "content_id" : 6,
+    "content": "https://naroo.or.kr/theme/mapo/img/site_07.gif"
+}
+
+### For Test
+POST http://localhost:3010/resource
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjMwNDU2MzgxfQ.n-9VtD7s9fSPo5PpYO-sb8OnOSyAoKXbKO0-eOnSHoo
+content-type: application/json
+
+{
+    "type": "org_carousel",
+    "content_id" : 7,
+    "content": "https://naroo.or.kr/theme/mapo/img/site_08.gif"
+}
