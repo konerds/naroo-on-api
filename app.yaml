@@ -1,5 +1,5 @@
 # [SERVICE NAME]
-service: backend
+service: naroo-on-backend
 # [START runtime]
 runtime: nodejs12
 vpc_access_connector:

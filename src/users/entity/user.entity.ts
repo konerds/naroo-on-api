@@ -15,7 +15,7 @@ export class User extends Common {
   @Column('varchar', { unique: true })
   email: string;
 
-  @Column('varchar', { unique: true })
+  @Column('varchar')
   nickname: string;
 
   @Column('varchar')

@@ -60,7 +60,18 @@ export class UsersService {
 
     if (isUniquePhone !== undefined) {
       throw new HttpException(
-        '동일한 휴대폰 번호가 존재합니다!',
+        '등록된 휴대폰 번호가 존재합니다!',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const isUniqueEmail = await this.usersRepository.findOne({
+      where: { email: signUpDto.email },
+    });
+
+    if (isUniqueEmail !== undefined) {
+      throw new HttpException(
+        '등록된 이메일 주소가 존재합니다!',
         HttpStatus.BAD_REQUEST,
       );
     }
