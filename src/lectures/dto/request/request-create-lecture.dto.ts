@@ -1,15 +1,13 @@
 import {
-  IsArray,
   IsDateString,
   IsNotEmpty,
   IsOptional,
   IsString,
-  IsUrl,
 } from 'class-validator';
 
 export class RequestCreateLectureDto {
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: '올바른 강의 제목을 입력해주세요' })
+  @IsNotEmpty({ message: '강의 제목을 입력해주세요' })
   title: string;
 
   @IsString()

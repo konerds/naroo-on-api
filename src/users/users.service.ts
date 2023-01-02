@@ -29,7 +29,7 @@ export class UsersService {
     const existAdminUser = await this.usersRepository.findOne({
       where: { role: CONST_ROLE_TYPE.ADMIN },
     });
-    if (existAdminUser === undefined) {
+    if (!!!existAdminUser) {
       const hashedPassword = await bcrypt.hash('abcd1234!', 10);
       await this.usersRepository.save({
         role: CONST_ROLE_TYPE.ADMIN,
@@ -45,163 +45,173 @@ export class UsersService {
   }
 
   async signUp(signUpDto: SignUpDto) {
-    const hashedPassword = await bcrypt.hash(signUpDto.password, 10);
-
-    if (!signUpDto.phone.match(/^[0-9]{3}[-]+[0-9]{4}[-]+[0-9]{4}$/)) {
-      throw new HttpException(
-        '휴대폰 번호를 정확하게 입력해주세요!',
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+    try {
+      const hashedPassword = await bcrypt.hash(signUpDto.password, 10);
+      if (!signUpDto.phone.match(/^[0-9]{3}[-]+[0-9]{4}[-]+[0-9]{4}$/)) {
+        throw new HttpException(
+          '휴대폰 번호를 정확하게 입력해주세요',
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+      const isUniquePhone = await this.usersRepository.findOne({
+        where: { phone: signUpDto.phone },
+      });
+      if (!!isUniquePhone) {
+        throw new HttpException(
+          '등록된 휴대폰 번호가 존재합니다',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      const isUniqueEmail = await this.usersRepository.findOne({
+        where: { email: signUpDto.email },
+      });
+      if (!!isUniqueEmail) {
+        throw new HttpException(
+          '등록된 이메일 주소가 존재합니다',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      const verifyToken = UUID();
+      const user = this.usersRepository.create({
+        email: signUpDto.email,
+        nickname: signUpDto.nickname,
+        password: hashedPassword,
+        phone: signUpDto.phone,
+        isAgreeEmail: signUpDto.isAgreeEmail === 'true' ? true : false,
+        isAuthorized: false,
+        verifyToken: verifyToken,
+      });
+      await this.sendVerifyEmail(user);
+      const result = this.usersRepository.save(user);
+      if (!!!result) {
+        throw new HttpException(
+          '회원 등록에 실패하였습니다',
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+      return { message: '발송된 메일을 통해 이메일 인증을 완료해주세요' };
+    } catch (err) {
+      throw err;
     }
-
-    const isUniquePhone = await this.usersRepository.findOne({
-      where: { phone: signUpDto.phone },
-    });
-
-    if (isUniquePhone !== undefined) {
-      throw new HttpException(
-        '등록된 휴대폰 번호가 존재합니다!',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    const isUniqueEmail = await this.usersRepository.findOne({
-      where: { email: signUpDto.email },
-    });
-
-    if (isUniqueEmail !== undefined) {
-      throw new HttpException(
-        '등록된 이메일 주소가 존재합니다!',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    const verifyToken = UUID();
-
-    const user = this.usersRepository.create({
-      email: signUpDto.email,
-      nickname: signUpDto.nickname,
-      password: hashedPassword,
-      phone: signUpDto.phone,
-      isAgreeEmail: signUpDto.isAgreeEmail === 'true' ? true : false,
-      isAuthorized: false,
-      verifyToken: verifyToken,
-    });
-
-    await this.sendVerifyEmail(user);
-
-    await this.usersRepository.save(user);
-
-    return user;
   }
 
   async signIn(signInDto: SignInDto) {
-    const user = await this.usersRepository.findOne({
-      where: {
-        email: signInDto.email,
-      },
-      select: ['id', 'email', 'password', 'isAuthorized', 'verifyToken'],
-    });
-
-    if (!user) {
-      throw new HttpException(
-        '존재하지 않는 유저입니다.',
-        HttpStatus.UNAUTHORIZED,
+    try {
+      const user = await this.usersRepository.findOne({
+        where: {
+          email: signInDto.email,
+        },
+        select: ['id', 'email', 'password', 'isAuthorized', 'verifyToken'],
+      });
+      if (!!!user) {
+        throw new HttpException(
+          '존재하지 않는 계정입니다',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      if (!user.isAuthorized) {
+        await this.sendVerifyEmail(user);
+        throw new HttpException(
+          '재전송된 인증 메일을 통해 이메일 인증을 완료해주세요',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+      const checkPassword = await bcrypt.compare(
+        signInDto.password,
+        user.password,
       );
+      if (!checkPassword) {
+        throw new HttpException(
+          '비밀번호가 일치하지 않습니다',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+      const token = this.jwtService.sign({ id: user.id });
+      return { token };
+    } catch (err) {
+      throw err;
     }
-
-    if (!user.isAuthorized) {
-      await this.sendVerifyEmail(user);
-      throw new HttpException(
-        '이메일 인증 메일을 재전송하였습니다. 이메일 인증을 완료해주세요!',
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
-    const checkPassword = await bcrypt.compare(
-      signInDto.password,
-      user.password,
-    );
-
-    if (!checkPassword) {
-      throw new HttpException(
-        '비밀번호가 일치하지 않습니다.',
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
-    const token = this.jwtService.sign({ id: user.id });
-
-    return { token };
   }
 
   async sendVerifyEmail(user: User) {
-    await this.mailerService.sendMail({
-      to: user.email,
-      from: this.configService.get<string>('MAILER_USER'),
-      subject:
-        '나루온 회원이 되신 것을 축하합니다! 링크 접속을 통해 이메일 인증 요청을 완료해주세요!',
-      html: `<a href="${process.env.FRONT_URL}/verify/${user.verifyToken}">이메일 인증하기</a>`,
-    });
+    try {
+      await this.mailerService.sendMail({
+        to: user.email,
+        from: this.configService.get<string>('MAILER_USER'),
+        subject:
+          '나루온 회원이 되신 것을 축하합니다, 제공된 링크를 통해 이메일 인증 요청을 완료해주세요',
+        html: `<a style="background-color:black;color:white;border-radius:10px;padding:10px;display:block;margin:auto;" href="${process.env.FRONT_URL}/verify/${user.verifyToken}">이메일 인증하기</a>`,
+      });
+    } catch (err) {
+      throw new HttpException(
+        '인증 메일을 전송하는 데 오류가 발생하였습니다',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async verifyCode(param: { requestToken: string }) {
-    const user = await this.usersRepository.findOne({
-      where: {
-        verifyToken: param.requestToken,
-      },
-    });
-
-    if (!user)
-      throw new HttpException(
-        '잘못된 인증 요청입니다!',
-        HttpStatus.UNAUTHORIZED,
-      );
-
-    user.verifyToken = null;
-    user.isAuthorized = true;
-
-    await this.usersRepository.save(user);
-
-    const token = this.jwtService.sign({ id: user.id });
-
-    return { token };
+    try {
+      const user = await this.usersRepository.findOne({
+        where: {
+          verifyToken: param.requestToken,
+        },
+      });
+      if (!!!user)
+        throw new HttpException(
+          '잘못된 인증 요청입니다',
+          HttpStatus.UNAUTHORIZED,
+        );
+      user.verifyToken = null;
+      user.isAuthorized = true;
+      const result = await this.usersRepository.save(user);
+      const token = this.jwtService.sign({ id: result.id });
+      return { token };
+    } catch (err) {
+      throw err;
+    }
   }
 
   async sendInitPassword(initPasswordDto: InitPasswordDto) {
-    const user = await this.usersRepository.findOne({
-      where: {
-        email: initPasswordDto.email,
-        nickname: initPasswordDto.nickname,
-        phone: initPasswordDto.phone,
-      },
-    });
-
-    if (!user)
-      throw new HttpException(
-        '계정을 찾을 수 없습니다!',
-        HttpStatus.UNAUTHORIZED,
-      );
-
-    const randomPassword = UUID().substr(0, 16);
-    const hashedPassword = await bcrypt.hash(randomPassword, 10);
-
-    user.password = hashedPassword;
-
-    await this.mailerService.sendMail({
-      to: user.email,
-      from: this.configService.get<string>('MAILER_USER'),
-      subject: '나루온 비밀번호 재설정 메일',
-      html: `<div><p>${user.nickname} / ${user.email} 계정의 초기화된 비밀번호는 ${randomPassword} 입니다!</p><p>로그인하신 후 반드시 비밀번호를 재설정해주세요!</p></div>`,
-    });
-
-    await this.usersRepository.save(user);
-
-    return user;
+    try {
+      const user = await this.usersRepository.findOne({
+        where: {
+          email: initPasswordDto.email,
+          nickname: initPasswordDto.nickname,
+          phone: initPasswordDto.phone,
+        },
+      });
+      if (!!!user)
+        throw new HttpException(
+          '존재하지 않는 계정입니다',
+          HttpStatus.NOT_FOUND,
+        );
+      const randomPassword = UUID().substr(0, 16);
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
+      user.password = hashedPassword;
+      await this.mailerService.sendMail({
+        to: user.email,
+        from: this.configService.get<string>('MAILER_USER'),
+        subject: '나루온 비밀번호 재설정 메일',
+        html: `<div><p style="font-size:1rem;">${user.nickname} / ${user.email} 계정의 임시 비밀번호는 <span style="color:blue;">${randomPassword}</span> 입니다</p><p style="margin-top:5px;color:red;font-size:0.7rem">보안을 위해 반드시 로그인하신 후 비밀번호를 재설정해주세요!</p></div>`,
+      });
+      const result = await this.usersRepository.save(user);
+      if (!!!result) {
+        throw new HttpException(
+          '비밀번호 초기화에 실패하였습니다',
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+      return {
+        message: '보안을 위해 반드시 로그인하신 후 비밀번호를 재설정해주세요',
+      };
+    } catch (err) {
+      throw err;
+    }
   }
 
   getMe(user: User) {
-    return user
+    return !!user
       ? {
           userId: user.id,
           role: user.role,
@@ -211,27 +221,35 @@ export class UsersService {
   }
 
   async getMyInfo(user: User) {
-    const student = await this.usersRepository.findOne({
-      where: { id: +user.id },
-      select: ['id', 'email', 'nickname', 'phone'],
-    });
-    if (!student) {
-      throw new HttpException(
-        '해당 유저가 존재하지 않습니다!',
-        HttpStatus.NOT_FOUND,
-      );
+    try {
+      const student = await this.usersRepository.findOne({
+        where: { id: +user.id },
+        select: ['id', 'email', 'nickname', 'phone'],
+      });
+      if (!!!student) {
+        throw new HttpException(
+          '존재하지 않는 계정입니다',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return student;
+    } catch (err) {
+      throw err;
     }
-    return student;
   }
 
   async findAllUsers() {
-    const users = await this.usersRepository.find({
-      select: ['id', 'email', 'nickname', 'phone', 'role'],
-    });
-    if (users.length === 0) {
-      return null;
+    try {
+      const users = await this.usersRepository.find({
+        select: ['id', 'email', 'nickname', 'phone', 'role'],
+      });
+      if (users.length === 0) {
+        return null;
+      }
+      return users;
+    } catch (err) {
+      throw err;
     }
-    return users;
   }
 
   async updateUserInfo(
@@ -246,64 +264,91 @@ export class UsersService {
       introduce: string | null;
     },
   ) {
-    if (
-      typeof user.role === typeof CONST_ROLE_TYPE &&
-      user.role !== CONST_ROLE_TYPE.ADMIN
-    ) {
-      throw new HttpException('관리자 권한이 없습니다!', HttpStatus.FORBIDDEN);
-    }
-    if (
-      typeof user.role === typeof CONST_ROLE_TYPE &&
-      user.role !== CONST_ROLE_TYPE.STUDENT
-    ) {
-      if (user.id !== +param.userId) {
+    try {
+      if (
+        typeof user.role === typeof CONST_ROLE_TYPE &&
+        user.role !== CONST_ROLE_TYPE.ADMIN
+      ) {
+        throw new HttpException('관리자 권한이 없습니다', HttpStatus.FORBIDDEN);
+      }
+      if (
+        typeof user.role === typeof CONST_ROLE_TYPE &&
+        user.role !== CONST_ROLE_TYPE.STUDENT
+      ) {
+        if (user.id !== +param.userId) {
+          throw new HttpException(
+            '회원 정보를 수정할 권한이 없습니다',
+            HttpStatus.FORBIDDEN,
+          );
+        }
+      }
+      const existUpdateUser = await this.usersRepository.findOne({
+        where: {
+          id: +param.userId,
+        },
+      });
+      if (!!!existUpdateUser) {
+        throw new HttpException('잘못된 요청입니다', HttpStatus.BAD_REQUEST);
+      }
+      existUpdateUser.email = updateUserInfoDto.email
+        ? updateUserInfoDto.email
+        : existUpdateUser.email;
+      existUpdateUser.nickname = updateUserInfoDto.nickname
+        ? updateUserInfoDto.nickname
+        : existUpdateUser.nickname;
+      existUpdateUser.password = updateUserInfoDto.password
+        ? await bcrypt.hash(updateUserInfoDto.password, 10)
+        : existUpdateUser.password;
+      existUpdateUser.phone = updateUserInfoDto.phone
+        ? updateUserInfoDto.phone
+        : existUpdateUser.phone;
+      existUpdateUser.role = updateUserInfoDto.role
+        ? updateUserInfoDto.role
+        : existUpdateUser.role;
+      const result = await this.usersRepository.save(existUpdateUser);
+      if (!!!result) {
         throw new HttpException(
-          '회원 정보를 수정할 권한이 없습니다!',
-          HttpStatus.FORBIDDEN,
+          '회원 정보 업데이트에 실패하였습니다',
+          HttpStatus.UNPROCESSABLE_ENTITY,
         );
       }
+      return { message: '성공적으로 회원 정보가 업데이트되었습니다' };
+    } catch (err) {
+      throw err;
     }
-    const existUpdateUser = await this.usersRepository.findOne({
-      where: {
-        id: +param.userId,
-      },
-    });
-    if (!existUpdateUser) {
-      throw new HttpException('잘못된 요청입니다!', HttpStatus.BAD_REQUEST);
-    }
-    existUpdateUser.email = updateUserInfoDto.email
-      ? updateUserInfoDto.email
-      : existUpdateUser.email;
-    existUpdateUser.nickname = updateUserInfoDto.nickname
-      ? updateUserInfoDto.nickname
-      : existUpdateUser.nickname;
-    existUpdateUser.password = updateUserInfoDto.password
-      ? await bcrypt.hash(updateUserInfoDto.password, 10)
-      : existUpdateUser.password;
-    existUpdateUser.phone = updateUserInfoDto.phone
-      ? updateUserInfoDto.phone
-      : existUpdateUser.phone;
-    existUpdateUser.role = updateUserInfoDto.role
-      ? updateUserInfoDto.role
-      : existUpdateUser.role;
-    return await this.usersRepository.save(existUpdateUser);
   }
 
   async deleteUser(param: { userId: string }, user: User) {
-    if (
-      typeof user.role === typeof CONST_ROLE_TYPE &&
-      user.role !== CONST_ROLE_TYPE.ADMIN
-    ) {
-      throw new HttpException('관리자 권한이 없습니다!', HttpStatus.FORBIDDEN);
+    try {
+      if (
+        typeof user.role === typeof CONST_ROLE_TYPE &&
+        user.role !== CONST_ROLE_TYPE.ADMIN
+      ) {
+        throw new HttpException('관리자 권한이 없습니다', HttpStatus.FORBIDDEN);
+      }
+      const existDeleteUser = await this.usersRepository.findOne({
+        where: {
+          id: +param.userId,
+        },
+      });
+      if (!!!existDeleteUser) {
+        throw new HttpException(
+          '존재하지 않는 회원입니다',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      const result = await this.usersRepository.delete({
+        id: existDeleteUser.id,
+      });
+      if (!(!!result && result.affected === 1)) {
+        throw new HttpException(
+          '회원 정보 삭제에 실패하였습니다',
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+      return { message: '성공적으로 회원 정보가 삭제되었습니다' };
+    } catch (err) {
+      throw err;
     }
-    const existDeleteUser = await this.usersRepository.findOne({
-      where: {
-        id: +param.userId,
-      },
-    });
-    const result = await this.usersRepository.delete({
-      id: existDeleteUser.id,
-    });
-    return result.affected === 1 ? { ok: true } : { ok: false };
   }
 }

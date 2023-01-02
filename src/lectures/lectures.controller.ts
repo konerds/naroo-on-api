@@ -8,10 +8,10 @@ import {
   Put,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../users/guard/jwt.guard';
 import { RequestCreateLectureDto } from './dto/request/request-create-lecture.dto';
-import { ResponseCreateLectureDto } from './dto/response/responseCreateLecture.dto';
 import { LecturesService } from './lectures.service';
 import { GetUser } from '../users/decorator/get-user.decorator';
 import { User } from '../users/entity/user.entity';
@@ -29,16 +29,16 @@ import { RequestCreateAnswerDto } from './dto/request/request-create-answer.dto'
 import { RequestAnswerIdDto } from './dto/request/request-answer-id.dto';
 import { RequestNoticeIdDto } from './dto/request/request-notice-id.dto';
 import { RequestQuestionIdDto } from './dto/request/request-question-id.dto';
+import { ErrorsInterceptor } from 'src/common/entity/errors.interceptor';
 
 @Controller('lecture')
+@UseInterceptors(ErrorsInterceptor)
 export class LecturesController {
   constructor(private readonly lecturesService: LecturesService) {}
 
   @Post('/create')
   @UseGuards(AdminUserGuard)
-  createLecture(
-    @Body() requestCreateLectureDto: RequestCreateLectureDto,
-  ): Promise<ResponseCreateLectureDto | string> {
+  createLecture(@Body() requestCreateLectureDto: RequestCreateLectureDto) {
     return this.lecturesService.createLecture(requestCreateLectureDto);
   }
 
@@ -62,62 +62,62 @@ export class LecturesController {
   }
 
   @Get('/all')
-  readAllLectures() {
-    return this.lecturesService.readAllLectures();
+  getAllLectures() {
+    return this.lecturesService.getAllLectures();
   }
 
   @Get('/guest/:lectureId')
-  readLectureByIdGuest(@Param() pathParam: RequestLectureIdDto) {
-    return this.lecturesService.readLectureByIdGuest(pathParam);
+  getLectureByIdGuest(@Param() pathParam: RequestLectureIdDto) {
+    return this.lecturesService.getLectureByIdForGuest(pathParam);
   }
 
   @Get('/:lectureId')
   @UseGuards(JwtAuthGuard)
-  readLectureById(
+  getLectureById(
     @GetUser() user: User,
     @Param() pathParam: RequestLectureIdDto,
   ) {
-    return this.lecturesService.readLectureById(user, pathParam);
+    return this.lecturesService.getLectureById(user, pathParam);
   }
 
   @Get('/video/:lectureId')
   @UseGuards(JwtAuthGuard)
-  readLectureVideoById(
+  getLectureVideoById(
     @GetUser() user: User,
     @Param() pathParam: RequestLectureIdDto,
   ) {
-    return this.lecturesService.readLectureVideoById(user, pathParam);
+    return this.lecturesService.getLectureVideoById(user, pathParam);
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  readLectures(@GetUser() user: User) {
-    return this.lecturesService.readLectures(user);
+  getLectures(@GetUser() user: User) {
+    return this.lecturesService.getLectures(user);
   }
 
   @Get('/admin/status')
   @UseGuards(AdminUserGuard)
-  readLectureStatuses() {
-    return this.lecturesService.readLectureStatuses();
+  getStatusLectures() {
+    return this.lecturesService.getStatusLectures();
   }
 
   @Put('/:lectureId')
   @UseGuards(StudentUserGuard)
-  registerLecture(
+  connectUserWithLecture(
     @Param() pathParam: RequestLectureIdDto,
     @GetUser() user: User,
   ) {
-    return this.lecturesService.registerLecture(pathParam, user);
+    return this.lecturesService.connectUserWithLecture(pathParam, user);
   }
 
   @Put('/admin/status/:lectureId')
   @UseGuards(AdminUserGuard)
-  updateLectureStatus(
+  updateStatusLecture(
     @Param() pathParam: RequestLectureIdDto,
     @Query() queryParam: RequestUserIdDto,
     @Body() requestUpdateLectureStatus: RequestUpdateLectureStatusDto,
   ) {
-    return this.lecturesService.updateLectureStatus(
+    return this.lecturesService.updateStatusLecture(
       pathParam,
       queryParam,
       requestUpdateLectureStatus,
@@ -132,13 +132,13 @@ export class LecturesController {
 
   @Get('/admin/tag')
   @UseGuards(AdminUserGuard)
-  readAllTags() {
-    return this.lecturesService.readAllTags();
+  getAllTags() {
+    return this.lecturesService.getAllTags();
   }
 
   @Get('/tag/:lectureId')
-  readTags(@Param() pathParam: RequestLectureIdDto) {
-    return this.lecturesService.readTags(pathParam);
+  getTags(@Param() pathParam: RequestLectureIdDto) {
+    return this.lecturesService.getTags(pathParam);
   }
 
   @Put('/admin/tag/:tag_id')
@@ -158,20 +158,23 @@ export class LecturesController {
 
   @Put('/admin/tag/register/:lectureId')
   @UseGuards(AdminUserGuard)
-  registerTag(
+  connectTagToLecture(
     @Param() pathParam: RequestLectureIdDto,
     @Body() requestRegisterTagDto: RequestRegisterTagDto,
   ) {
-    return this.lecturesService.registerTag(pathParam, requestRegisterTagDto);
+    return this.lecturesService.connectTagToLecture(
+      pathParam,
+      requestRegisterTagDto,
+    );
   }
 
   @Delete('/admin/tag/unregister/:lectureId')
   @UseGuards(AdminUserGuard)
-  unregisterTag(
+  disconnectTagFromLecture(
     @Param() pathParam: RequestLectureIdDto,
     @Query() queryParam: RequestTagIdDto,
   ) {
-    return this.lecturesService.unregisterTag(pathParam, queryParam);
+    return this.lecturesService.disconnectTagFromLecture(pathParam, queryParam);
   }
 
   @Put('/admin/notice/:lectureId')
@@ -190,8 +193,8 @@ export class LecturesController {
   }
 
   @Get('/notice/:lectureId')
-  readNotices(@Param() pathParam: RequestLectureIdDto) {
-    return this.lecturesService.readNotices(pathParam);
+  getNotices(@Param() pathParam: RequestLectureIdDto) {
+    return this.lecturesService.getNotices(pathParam);
   }
 
   @Delete('/admin/notice/:lectureId')

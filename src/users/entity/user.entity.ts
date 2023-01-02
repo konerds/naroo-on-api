@@ -1,6 +1,6 @@
 import { Common } from '../../common/entity/common.entity';
 import { Question } from '../../lectures/entity/question.entity';
-import { StudentLecture } from '../../lectures/entity/studentLecture.entity';
+import { StudentLecture } from '../../lectures/entity/student-lecture.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 export const CONST_ROLE_TYPE = {

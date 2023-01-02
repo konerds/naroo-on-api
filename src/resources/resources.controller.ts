@@ -8,14 +8,17 @@ import {
   Put,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../users/guard/jwt.guard';
 import { ResourcesService } from './resources.service';
 import { RESOURCE_TYPE } from './entity/resource.entity';
 import { GetUser } from '../users/decorator/get-user.decorator';
 import { User } from '../users/entity/user.entity';
+import { ErrorsInterceptor } from 'src/common/entity/errors.interceptor';
 
 @Controller('resource')
+@UseInterceptors(ErrorsInterceptor)
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 

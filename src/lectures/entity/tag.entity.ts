@@ -1,6 +1,6 @@
 import { Common } from '../../common/entity/common.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
-import { LectureTag } from './lectureTag.entity';
+import { LectureTag } from './lecture-tag.entity';
 
 @Entity()
 export class Tag extends Common {

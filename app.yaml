@@ -1,7 +1,7 @@
 # [SERVICE NAME]
 service: naroo-on-backend
 # [START runtime]
-runtime: nodejs12
+runtime: nodejs18
 vpc_access_connector:
   name: projects/macro-market-370703/locations/asia-northeast3/connectors/postgres-connector
 # [END runtime]

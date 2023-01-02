@@ -1,4 +1,4 @@
-import { Lecture } from '../../lectures/entity/lecture.entity';
+import { Lecture } from './lecture.entity';
 import { User } from '../../users/entity/user.entity';
 import {
   Column,
@@ -7,6 +7,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  PrimaryColumn,
 } from 'typeorm';
 
 export const CONST_LECTURE_STATUS = {
@@ -22,8 +23,13 @@ export type LECTURE_STATUS =
 
 @Entity()
 export class StudentLecture {
+  @PrimaryColumn()
+  userId: string;
+
+  @PrimaryColumn()
+  lectureId: string;
+
   @ManyToOne(() => User, (user) => user.studentLectures, {
-    primary: true,
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
@@ -31,7 +37,6 @@ export class StudentLecture {
   user: User;
 
   @ManyToOne(() => Lecture, (lecture) => lecture.studentLectures, {
-    primary: true,
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })

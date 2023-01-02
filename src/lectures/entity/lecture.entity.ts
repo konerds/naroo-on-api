@@ -1,9 +1,9 @@
 import { Common } from '../../common/entity/common.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
-import { LectureNotice } from './lectureNotice.entity';
-import { LectureTag } from './lectureTag.entity';
+import { LectureNotice } from './lecture-notice.entity';
+import { LectureTag } from './lecture-tag.entity';
 import { Question } from './question.entity';
-import { StudentLecture } from './studentLecture.entity';
+import { StudentLecture } from './student-lecture.entity';
 
 @Entity()
 export class Lecture extends Common {

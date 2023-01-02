@@ -19,7 +19,7 @@ export class StudentUserGuard extends AuthGuard('jwt') {
       role !== CONST_ROLE_TYPE.STUDENT
     ) {
       throw new HttpException(
-        '해당 요청은 학생만 가능합니다!',
+        '해당 요청은 학생만 가능합니다',
         HttpStatus.FORBIDDEN,
       );
     }

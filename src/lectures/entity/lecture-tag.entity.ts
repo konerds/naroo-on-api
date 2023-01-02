@@ -1,11 +1,22 @@
-import { Lecture } from '../../lectures/entity/lecture.entity';
-import { CreateDateColumn, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Lecture } from './lecture.entity';
+import {
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { Tag } from './tag.entity';
 
 @Entity()
 export class LectureTag {
+  @PrimaryColumn()
+  lectureId: string;
+
+  @PrimaryColumn()
+  tagId: string;
+
   @ManyToOne(() => Lecture, (lecture) => lecture.lectureTags, {
-    primary: true,
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
@@ -13,7 +24,6 @@ export class LectureTag {
   lecture: Lecture;
 
   @ManyToOne(() => Tag, (tag) => tag.lectureTags, {
-    primary: true,
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })

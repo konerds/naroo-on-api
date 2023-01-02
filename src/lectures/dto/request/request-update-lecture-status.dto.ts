@@ -2,7 +2,7 @@ import { IsEnum } from 'class-validator';
 import {
   CONST_LECTURE_STATUS,
   LECTURE_STATUS,
-} from '../../entity/studentLecture.entity';
+} from '../../entity/student-lecture.entity';
 
 export class RequestUpdateLectureStatusDto {
   @IsEnum(CONST_LECTURE_STATUS)

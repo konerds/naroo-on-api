@@ -18,7 +18,7 @@ config();
       ...(process.env.NODE_ENV === 'production'
         ? {
             url: process.env.DATABASE_URL,
-            extra: { ssl: { rejectUnauthorized: false } },
+            extra: { ssl: { rejectUnauthorized: true } },
           }
         : {
             url: process.env.DATABASE_URL,
