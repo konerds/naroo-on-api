@@ -29,7 +29,7 @@ import { RequestCreateAnswerDto } from './dto/request/request-create-answer.dto'
 import { RequestAnswerIdDto } from './dto/request/request-answer-id.dto';
 import { RequestNoticeIdDto } from './dto/request/request-notice-id.dto';
 import { RequestQuestionIdDto } from './dto/request/request-question-id.dto';
-import { ErrorsInterceptor } from 'src/common/entity/errors.interceptor';
+import { ErrorsInterceptor } from '../common/entity/errors.interceptor';
 
 @Controller('lecture')
 @UseInterceptors(ErrorsInterceptor)

@@ -15,7 +15,7 @@ import { ResourcesService } from './resources.service';
 import { RESOURCE_TYPE } from './entity/resource.entity';
 import { GetUser } from '../users/decorator/get-user.decorator';
 import { User } from '../users/entity/user.entity';
-import { ErrorsInterceptor } from 'src/common/entity/errors.interceptor';
+import { ErrorsInterceptor } from '../common/entity/errors.interceptor';
 
 @Controller('resource')
 @UseInterceptors(ErrorsInterceptor)

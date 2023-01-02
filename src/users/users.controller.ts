@@ -19,7 +19,7 @@ import { GetUser } from './decorator/get-user.decorator';
 import { AdminUserGuard } from './guard/admin-user.guard';
 import { StudentUserGuard } from './guard/student-user.guard';
 import { InitPasswordDto } from './dto/init-password.dto';
-import { ErrorsInterceptor } from 'src/common/entity/errors.interceptor';
+import { ErrorsInterceptor } from '../common/entity/errors.interceptor';
 
 @Controller('user')
 @UseInterceptors(ErrorsInterceptor)
