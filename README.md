@@ -41,6 +41,6 @@
 
 > [Link](https://naroo-on-frontend-dot-macro-market-370703.du.r.appspot.com)
 
-### Developer, Engineer Manual
+### Developer, Engineer Manual (in Korean)
 
 > [Link](https://cdn.discordapp.com/attachments/943123016659922977/1059857891256967318/naroo-on-manual-211028.pdf)
