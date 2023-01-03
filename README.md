@@ -33,6 +33,8 @@
 | JWT_SECRET           | Secret Key for Generate JWT Access Token                                                                                                       |
 | IS_SAVE_LOGFILE      | If 'Y', logs automatically stored as file in [workspace]/logs directory<br/>You might have to premake dir folder in workspace cuz of permisson |
 
+> **If your devops has alternative logging way, set IS_SAVE_LOGFILE to 'N'**
+
 ### Github Repository Link of Front-end Project
 
 > [Link](https://github.com/konerds/naroo-on-frontend)

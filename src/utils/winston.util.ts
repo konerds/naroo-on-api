@@ -3,9 +3,7 @@ import * as winstonDaily from 'winston-daily-rotate-file';
 import * as winston from 'winston';
 import * as path from 'path';
 
-// const logDir = __dirname + '/../../logs';
 const logDir = path.join(__dirname, '..', '..', 'logs');
-console.log(logDir);
 const dailyOptions = (level: string) => {
   return {
     level,
