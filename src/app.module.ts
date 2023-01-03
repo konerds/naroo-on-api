@@ -24,7 +24,7 @@ config();
             url: process.env.DATABASE_URL,
           }),
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: process.env.IS_SYNC === 'Y' ? true : false,
       logging: true,
     }),
     UsersModule,

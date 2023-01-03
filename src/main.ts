@@ -5,6 +5,7 @@ import * as bodyParser from 'body-parser';
 import { config } from 'dotenv';
 import { ValidationError } from 'class-validator';
 import { BadRequestException } from '@nestjs/common/exceptions';
+import { winstonLogger } from './utils/winston.util';
 config();
 
 async function bootstrap() {
@@ -13,6 +14,7 @@ async function bootstrap() {
       origin: process.env.FRONT_URL,
       credentials: true,
     },
+    logger: winstonLogger,
   });
 
   app.useGlobalPipes(
@@ -25,9 +27,7 @@ async function bootstrap() {
         const newErrors = [];
         errors.forEach((error) => {
           Object.values(error.constraints).forEach((v) => {
-            if (!!v) {
-              newErrors.push(v);
-            }
+            newErrors.push(v || '잘못된 요청입니다');
           });
         });
         return new BadRequestException(newErrors);

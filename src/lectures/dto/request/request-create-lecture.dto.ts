@@ -6,12 +6,12 @@ import {
 } from 'class-validator';
 
 export class RequestCreateLectureDto {
-  @IsString({ message: '올바른 강의 제목을 입력해주세요' })
+  @IsString()
   @IsNotEmpty({ message: '강의 제목을 입력해주세요' })
   title: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: '강의 설명을 입력해주세요' })
   description: string;
 
   @IsString()
@@ -27,7 +27,7 @@ export class RequestCreateLectureDto {
   expiredAt: Date;
 
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: '강사 이름을 입력해주세요' })
   teacherName: string;
 
   @IsString({ each: true })

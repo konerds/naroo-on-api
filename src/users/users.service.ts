@@ -22,7 +22,9 @@ export class UsersService {
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
   ) {
-    this.createAdminUser();
+    if (process.env.IS_SYNC === 'Y') {
+      this.createAdminUser();
+    }
   }
 
   async createAdminUser() {
@@ -30,7 +32,10 @@ export class UsersService {
       where: { role: CONST_ROLE_TYPE.ADMIN },
     });
     if (!!!existAdminUser) {
-      const hashedPassword = await bcrypt.hash('abcd1234!', 10);
+      const hashedPassword = await bcrypt.hash(
+        process.env.PASSWORD_FIRST_ADMIN,
+        10,
+      );
       await this.usersRepository.save({
         role: CONST_ROLE_TYPE.ADMIN,
         email: 'admin@test.com',

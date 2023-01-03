@@ -924,7 +924,7 @@ export class LecturesService {
       });
       if (!!!notice) {
         throw new HttpException(
-          '존재하지 않는 공지사항입니다!',
+          '존재하지 않는 공지사항입니다',
           HttpStatus.BAD_REQUEST,
         );
       }

@@ -25,15 +25,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user = await this.usersRepository.findOne({ where: { id } });
 
     if (!user) {
-      throw new HttpException(
-        '존재하지 않는 유저입니다!',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException('존재하지 않는 유저입니다', HttpStatus.NOT_FOUND);
     }
 
     if (!user.isAuthorized) {
       throw new HttpException(
-        '인증되지 않은 유저입니다!',
+        '인증되지 않은 유저입니다',
         HttpStatus.UNAUTHORIZED,
       );
     }

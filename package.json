@@ -38,6 +38,7 @@
     "dotenv": "^16.0.3",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
+    "nest-winston": "^1.8.0",
     "nodemailer": "^6.8.0",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
@@ -46,7 +47,9 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.8.0",
     "swagger-ui-express": "*",
-    "typeorm": "^0.3.11"
+    "typeorm": "^0.3.11",
+    "winston": "^3.8.2",
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.1.8",

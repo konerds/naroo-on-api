@@ -18,7 +18,7 @@ export class AdminUserGuard extends AuthGuard('jwt') {
       typeof role === typeof CONST_ROLE_TYPE &&
       role !== CONST_ROLE_TYPE.ADMIN
     ) {
-      throw new HttpException('관리자 권한이 없습니다!', HttpStatus.FORBIDDEN);
+      throw new HttpException('관리자 권한이 없습니다', HttpStatus.FORBIDDEN);
     }
     return super.canActivate(ctx);
   }
