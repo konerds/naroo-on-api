@@ -14,7 +14,7 @@ export class SignUpDto {
   password: string;
 
   @IsString()
-  @Length(2, 13, { message: '2자리에서 13자리의 닉네임을 입력해주세요' })
+  @Length(2, 13, { message: '2자리에서 13자리의 이름을 입력해주세요' })
   nickname: string;
 
   @Matches(/01[016789]-[^0][0-9]{2,3}-[0-9]{4}/, {
