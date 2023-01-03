@@ -19,13 +19,13 @@
 #### (This project use dotenv library, and load .env file)
 
 | Variable Name        | Description                                                                                        |
-| -------------------- | -------------------------------------------------------------------------------------------------- | --- |
+| -------------------- | -------------------------------------------------------------------------------------------------- |
 | PORT                 | Port Number                                                                                        |
 | FRONT_URL            | Frontend Web Service URL                                                                           |
 | DATABASE_URL         | PostgreSQL Database Access Credentials (eg. **postgres://[ID]:[PASSWORD]@[HOST]:[PORT]/[DBNAME]**) |
 | IS_SYNC              | If 'Y', will be set TypeORM-Force-Sync-Opt to true                                                 |
 | PASSWORD_FIRST_ADMIN | Password of Auto-Generated-Admin-Account When sync-mode                                            |
-| MAILER_SERVICE       | Mailer Service name, for example, mailgun, sendgrid, ... (This project use mailgun)                |     |
+| MAILER_SERVICE       | Mailer Service name, for example, mailgun, sendgrid, ... (This project use mailgun)                |
 | MAILER_HOST          | Mailer Service Hostname                                                                            |
 | MAILER_PORT          | Mailer Service Port Number                                                                         |
 | MAILER_USER          | Mailer Service Username                                                                            |
