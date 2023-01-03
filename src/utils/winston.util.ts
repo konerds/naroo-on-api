@@ -13,22 +13,26 @@ const dailyOptions = (level: string) => {
     zippedArchive: true,
   };
 };
-export const winstonLogger = WinstonModule.createLogger({
-  transports: [
-    new winston.transports.Console({
-      level: process.env.NODE_ENV === 'production' ? 'http' : 'silly',
-      format:
-        process.env.NODE_ENV === 'production'
-          ? winston.format.simple()
-          : winston.format.combine(
-              winston.format.timestamp(),
-              utilities.format.nestLike('naroo-on-backend', {
-                prettyPrint: true,
-              }),
-            ),
-    }),
-    new winstonDaily(dailyOptions('info')),
-    // new winstonDaily(dailyOptions('warn')),
-    new winstonDaily(dailyOptions('error')),
-  ],
-});
+
+export const winstonLogger =
+  process.env.IS_SAVE_LOGFILE === 'Y'
+    ? WinstonModule.createLogger({
+        transports: [
+          new winston.transports.Console({
+            level: process.env.NODE_ENV === 'production' ? 'http' : 'silly',
+            format:
+              process.env.NODE_ENV === 'production'
+                ? winston.format.simple()
+                : winston.format.combine(
+                    winston.format.timestamp(),
+                    utilities.format.nestLike('naroo-on-backend', {
+                      prettyPrint: true,
+                    }),
+                  ),
+          }),
+          new winstonDaily(dailyOptions('info')),
+          // new winstonDaily(dailyOptions('warn')),
+          new winstonDaily(dailyOptions('error')),
+        ],
+      })
+    : undefined;
