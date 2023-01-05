@@ -142,7 +142,7 @@ export class ResourcesService {
           content_id: +pathParam.content_id,
         },
       });
-      const result = await this.resourcesRepository.delete(resource);
+      const result = await this.resourcesRepository.softDelete(resource);
       if (!(!!result && result.affected === 1)) {
         throw new HttpException(
           '리소스 삭제에 실패하였습니다',

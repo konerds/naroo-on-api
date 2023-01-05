@@ -145,7 +145,7 @@ export class UsersService {
         from: this.configService.get<string>('MAILER_USER'),
         subject:
           '나루온 회원이 되신 것을 축하합니다, 제공된 링크를 통해 이메일 인증 요청을 완료해주세요',
-        html: `<a style="background-color:black;color:white;border-radius:10px;padding:10px;display:block;margin:auto;" href="${process.env.FRONT_URL}/verify/${user.verifyToken}">이메일 인증하기</a>`,
+        html: `<a style="background-color:black;color:white;border-radius:20px;padding:15px;display:block;margin:auto;width:300px" href="${process.env.FRONT_URL}/verify/${user.verifyToken}">이메일 인증하기</a>`,
       });
     } catch (err) {
       throw new HttpException(
@@ -295,9 +295,6 @@ export class UsersService {
       if (!!!existUpdateUser) {
         throw new HttpException('잘못된 요청입니다', HttpStatus.BAD_REQUEST);
       }
-      existUpdateUser.email = updateUserInfoDto.email
-        ? updateUserInfoDto.email
-        : existUpdateUser.email;
       existUpdateUser.nickname = updateUserInfoDto.nickname
         ? updateUserInfoDto.nickname
         : existUpdateUser.nickname;
@@ -342,7 +339,7 @@ export class UsersService {
           HttpStatus.NOT_FOUND,
         );
       }
-      const result = await this.usersRepository.delete({
+      const result = await this.usersRepository.softDelete({
         id: existDeleteUser.id,
       });
       if (!(!!result && result.affected === 1)) {

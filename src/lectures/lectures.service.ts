@@ -133,7 +133,9 @@ export class LecturesService {
           id: +param.lectureId,
         },
       });
-      const result = await this.lecturesRepository.delete({ id: lecture.id });
+      const result = await this.lecturesRepository.softDelete({
+        id: lecture.id,
+      });
       if (!(!!result && result.affected === 1)) {
         throw new HttpException(
           '강의 삭제에 실패하였습니다',
@@ -734,7 +736,7 @@ export class LecturesService {
           id: +pathParam.tag_id,
         },
       });
-      const result = await this.tagsRepository.delete({ id: tag.id });
+      const result = await this.tagsRepository.softDelete({ id: tag.id });
       if (!(!!result && result.affected === 1)) {
         throw new HttpException(
           '태그 삭제에 실패하였습니다',
@@ -768,7 +770,7 @@ export class LecturesService {
         .getRawMany();
       await existTags.reduce(async (prevPromise, existTag) => {
         await prevPromise;
-        const result = await this.lectureTagsRepository.delete({
+        const result = await this.lectureTagsRepository.softDelete({
           lecture: { id: +pathParam.lectureId },
           tag: { id: existTag.id },
         });
@@ -817,7 +819,7 @@ export class LecturesService {
           HttpStatus.BAD_REQUEST,
         );
       }
-      const result = await this.lectureTagsRepository.delete({
+      const result = await this.lectureTagsRepository.softDelete({
         lecture: { id: existTag.lecture_id },
         tag: { id: existTag.tag_id },
       });
@@ -894,7 +896,7 @@ export class LecturesService {
           HttpStatus.BAD_REQUEST,
         );
       }
-      const result = await this.lectureNoticesRepository.delete({
+      const result = await this.lectureNoticesRepository.softDelete({
         lecture: { id: +pathParam.lectureId },
         id: +queryParam.notice_id,
       });
@@ -1002,7 +1004,7 @@ export class LecturesService {
           HttpStatus.BAD_REQUEST,
         );
       }
-      const result = await this.questionsRepository.delete({
+      const result = await this.questionsRepository.softDelete({
         lecture: { id: +pathParam.lectureId },
         id: +queryParam.question_id,
       });
@@ -1101,7 +1103,7 @@ export class LecturesService {
           HttpStatus.BAD_REQUEST,
         );
       }
-      const result = await this.answersRepository.delete({
+      const result = await this.answersRepository.softDelete({
         id: +pathParam.answer_id,
       });
       if (!(!!result && result.affected === 1)) {
