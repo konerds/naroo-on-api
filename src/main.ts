@@ -24,6 +24,7 @@ async function bootstrap() {
       transform: true,
       dismissDefaultMessages: true,
       exceptionFactory: (errors: ValidationError[]) => {
+        console.error(errors);
         const newErrors = [];
         errors.forEach((error) => {
           Object.values(error.constraints).forEach((v) => {

@@ -770,7 +770,7 @@ export class LecturesService {
         .getRawMany();
       await existTags.reduce(async (prevPromise, existTag) => {
         await prevPromise;
-        const result = await this.lectureTagsRepository.softDelete({
+        const result = await this.lectureTagsRepository.delete({
           lecture: { id: +pathParam.lectureId },
           tag: { id: existTag.id },
         });
@@ -819,7 +819,7 @@ export class LecturesService {
           HttpStatus.BAD_REQUEST,
         );
       }
-      const result = await this.lectureTagsRepository.softDelete({
+      const result = await this.lectureTagsRepository.delete({
         lecture: { id: existTag.lecture_id },
         tag: { id: existTag.tag_id },
       });
