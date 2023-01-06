@@ -130,19 +130,24 @@ export class ResourcesService {
       ) {
         throw new HttpException('관리자 권한이 없습니다', HttpStatus.FORBIDDEN);
       }
-      if (+pathParam.content_id === 0) {
-        throw new HttpException(
-          '기본 리소스는 삭제할 수 없습니다',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
       const resource = await this.resourcesRepository.findOne({
         where: {
           type: queryParam.type as RESOURCE_TYPE,
           content_id: +pathParam.content_id,
         },
       });
-      const result = await this.resourcesRepository.softDelete(resource);
+      const countResources = await this.resourcesRepository.count({
+        where: {
+          type: queryParam.type as RESOURCE_TYPE,
+        },
+      });
+      if (countResources <= 1) {
+        throw new HttpException(
+          '기본 리소스는 삭제할 수 없습니다',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      const result = await this.resourcesRepository.delete(resource);
       if (!(!!result && result.affected === 1)) {
         throw new HttpException(
           '리소스 삭제에 실패하였습니다',
