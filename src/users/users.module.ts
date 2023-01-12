@@ -26,7 +26,7 @@ config();
     }),
     MailgunModule.forRoot({
       username: 'api',
-      key: process.env.MAILER_KEY,
+      key: process.env.MAILGUN_KEY,
     }),
     TypeOrmModule.forFeature([User]),
   ],

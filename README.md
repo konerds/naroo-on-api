@@ -25,11 +25,9 @@
 | DATABASE_URL         | PostgreSQL Database Access Credentials<br/>(eg. **postgres://[ID]:[PASSWORD]@[HOST]:[PORT]/[DBNAME]**)                                         |
 | IS_SYNC              | If 'Y', will be set TypeORM-Force-Sync-Opt to true                                                                                             |
 | PASSWORD_FIRST_ADMIN | Password of Auto-Generated-Admin-Account When sync-mode                                                                                        |
-| MAILER_SERVICE       | Mailer Service name, for example, mailgun, sendgrid, ...</br>(This project use mailgun)                                                        |
-| MAILER_HOST          | Mailer Service Hostname                                                                                                                        |
-| MAILER_PORT          | Mailer Service Port Number                                                                                                                     |
-| MAILER_USER          | Mailer Service Username                                                                                                                        |
-| MAILER_PASS          | Mailer Service Password                                                                                                                        |
+| MAILGUN_DOMAIN       | Domain of own service                                                                                                                          |
+| MAILGUN_KEY          | Mailgun Service Private Key                                                                                                                    |
+| MAILGUN_USER         | Mailgun Service Username                                                                                                                       |
 | JWT_SECRET           | Secret Key for Generate JWT Access Token                                                                                                       |
 | IS_SAVE_LOGFILE      | If 'Y', logs automatically stored as file in [workspace]/logs directory<br/>You might have to premake dir folder in workspace cuz of permisson |
 
