@@ -5,12 +5,12 @@ import * as bcrypt from 'bcrypt';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { JwtService } from '@nestjs/jwt';
-import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { v4 as UUID } from 'uuid';
 import { InitPasswordDto } from './dto/init-password.dto';
 import { config } from 'dotenv';
 import { Repository } from 'typeorm';
+import { MailgunService } from 'nestjs-mailgun';
 config();
 
 @Injectable()
@@ -18,7 +18,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-    private readonly mailerService: MailerService,
+    private readonly mailgunService: MailgunService,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
   ) {
@@ -140,9 +140,10 @@ export class UsersService {
 
   async sendVerifyEmail(user: User) {
     try {
-      await this.mailerService.sendMail({
+      const domain = this.configService.get<string>('MAILER_DOMAIN');
+      await this.mailgunService.createEmail(domain, {
         to: user.email,
-        from: this.configService.get<string>('MAILER_USER'),
+        from: this.configService.get<string>('MAILER_USER') + '@' + domain,
         subject:
           '나루온 회원이 되신 것을 축하합니다, 제공된 링크를 통해 이메일 인증 요청을 완료해주세요',
         html: `<a style="background-color:black;color:white;border-radius:20px;padding:15px;display:block;margin:auto;width:300px" href="${process.env.FRONT_URL}/verify/${user.verifyToken}">이메일 인증하기</a>`,
@@ -194,9 +195,10 @@ export class UsersService {
       const randomPassword = UUID().substr(0, 16);
       const hashedPassword = await bcrypt.hash(randomPassword, 10);
       user.password = hashedPassword;
-      await this.mailerService.sendMail({
+      const domain = this.configService.get<string>('MAILER_DOMAIN');
+      await this.mailgunService.createEmail(domain, {
         to: user.email,
-        from: this.configService.get<string>('MAILER_USER'),
+        from: this.configService.get<string>('MAILER_USER') + '@' + domain,
         subject: '나루온 비밀번호 재설정 메일',
         html: `<div><p style="font-size:1rem;">${user.nickname} / ${user.email} 계정의 임시 비밀번호는 <span style="color:blue;">${randomPassword}</span> 입니다</p><p style="margin-top:5px;color:red;font-size:0.7rem">보안을 위해 반드시 로그인하신 후 비밀번호를 재설정해주세요!</p></div>`,
       });

@@ -1,4 +1,3 @@
-import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -9,6 +8,7 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { config } from 'dotenv';
 import { User } from './entity/user.entity';
+import { MailgunModule } from 'nestjs-mailgun';
 config();
 
 @Module({
@@ -24,16 +24,9 @@ config();
         },
       }),
     }),
-    MailerModule.forRoot({
-      transport: {
-        service: process.env.MAILER_SERVICE,
-        host: process.env.MAILER_HOST,
-        port: +process.env.MAILER_PORT,
-        auth: {
-          user: process.env.MAILER_USER,
-          pass: process.env.MAILER_PASS,
-        },
-      },
+    MailgunModule.forRoot({
+      username: 'api',
+      key: process.env.MAILER_KEY,
     }),
     TypeOrmModule.forFeature([User]),
   ],
