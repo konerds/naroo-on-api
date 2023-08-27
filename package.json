@@ -1,8 +1,8 @@
 {
-  "name": "backend",
+  "name": "naroo-on-backend",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "naroo-on backend service",
+  "author": "konerds",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
