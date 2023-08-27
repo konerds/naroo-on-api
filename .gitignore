@@ -42,3 +42,7 @@ lerna-debug.log*
 
 # 보안관련해서..
 package-lock.json
+
+# GCP
+app.yaml
+package-gcp.json
