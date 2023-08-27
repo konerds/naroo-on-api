@@ -8,7 +8,8 @@
     "allowSyntheticDefaultImports": true,
     "target": "es2017",
     "sourceMap": true,
-    "outDir": "./",
+    "allowJs": true,
+    "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true
