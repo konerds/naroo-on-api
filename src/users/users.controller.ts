@@ -19,7 +19,7 @@ import { GetUser } from './decorator/get-user.decorator';
 import { AdminUserGuard } from './guard/admin-user.guard';
 import { StudentUserGuard } from './guard/student-user.guard';
 import { InitPasswordDto } from './dto/init-password.dto';
-import { ErrorsInterceptor } from '../common/entity/errors.interceptor';
+import { ErrorsInterceptor } from '../interceptors/errors.interceptor';
 
 @Controller('user')
 @UseInterceptors(ErrorsInterceptor)
@@ -64,9 +64,26 @@ export class UsersController {
     return this.usersService.findAllUsers();
   }
 
-  @Put('/admin/:userId')
+  @Put('/:userId')
   @UseGuards(JwtAuthGuard)
   updateUserInfo(
+    @GetUser() user: User,
+    @Body()
+    updateUserInfoDto: {
+      email: string | null;
+      nickname: string | null;
+      password: string | null;
+      phone: string | null;
+      role: ROLE_TYPE | null;
+      introduce: string | null;
+    },
+  ) {
+    return this.usersService.updateUserInfo(user, updateUserInfoDto);
+  }
+
+  @Put('/admin/:userId')
+  @UseGuards(AdminUserGuard)
+  updateUserInfoForAdmin(
     @Param() param: { userId: string },
     @GetUser() user: User,
     @Body()
@@ -79,7 +96,11 @@ export class UsersController {
       introduce: string | null;
     },
   ) {
-    return this.usersService.updateUserInfo(param, user, updateUserInfoDto);
+    return this.usersService.updateUserInfoForAdmin(
+      param,
+      user,
+      updateUserInfoDto,
+    );
   }
 
   @Delete('/admin/:userId')

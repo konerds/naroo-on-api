@@ -260,6 +260,51 @@ export class UsersService {
   }
 
   async updateUserInfo(
+    user: User,
+    updateUserInfoDto: {
+      email: string | null;
+      nickname: string | null;
+      password: string | null;
+      phone: string | null;
+      role: ROLE_TYPE | null;
+      introduce: string | null;
+    },
+  ) {
+    try {
+      const existUpdateUser = await this.usersRepository.findOne({
+        where: {
+          id: user.id,
+        },
+      });
+      if (!!!existUpdateUser) {
+        throw new HttpException('잘못된 요청입니다', HttpStatus.BAD_REQUEST);
+      }
+      existUpdateUser.nickname = updateUserInfoDto.nickname
+        ? updateUserInfoDto.nickname
+        : existUpdateUser.nickname;
+      existUpdateUser.password = updateUserInfoDto.password
+        ? await bcrypt.hash(updateUserInfoDto.password, 10)
+        : existUpdateUser.password;
+      existUpdateUser.phone = updateUserInfoDto.phone
+        ? updateUserInfoDto.phone
+        : existUpdateUser.phone;
+      existUpdateUser.role = updateUserInfoDto.role
+        ? updateUserInfoDto.role
+        : existUpdateUser.role;
+      const result = await this.usersRepository.save(existUpdateUser);
+      if (!!!result) {
+        throw new HttpException(
+          '회원 정보 업데이트에 실패하였습니다',
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+      return { message: '성공적으로 회원 정보가 업데이트되었습니다' };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async updateUserInfoForAdmin(
     param: { userId: string },
     user: User,
     updateUserInfoDto: {
@@ -277,17 +322,6 @@ export class UsersService {
         user.role !== CONST_ROLE_TYPE.ADMIN
       ) {
         throw new HttpException('관리자 권한이 없습니다', HttpStatus.FORBIDDEN);
-      }
-      if (
-        typeof user.role === typeof CONST_ROLE_TYPE &&
-        user.role !== CONST_ROLE_TYPE.STUDENT
-      ) {
-        if (user.id !== +param.userId) {
-          throw new HttpException(
-            '회원 정보를 수정할 권한이 없습니다',
-            HttpStatus.FORBIDDEN,
-          );
-        }
       }
       const existUpdateUser = await this.usersRepository.findOne({
         where: {

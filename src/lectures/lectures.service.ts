@@ -167,27 +167,26 @@ export class LecturesService {
         .getRawMany();
       const responseLectures = [];
       await allLectures.reduce(async (prevPromise, lecture) => {
-        return prevPromise.then(async () => {
-          const tags = await this.lectureTagsRepository
-            .createQueryBuilder('lecture_tag')
-            .innerJoin('lecture_tag.lecture', 'lecture')
-            .innerJoin('lecture_tag.tag', 'tag')
-            .where('lecture.id = :lectureId', { lectureId: lecture.id })
-            .select(['tag.id AS id', 'tag.name AS name'])
-            .orderBy('tag.name', 'DESC')
-            .getRawMany();
-          responseLectures.push({
-            id: lecture.id,
-            title: lecture.title,
-            images: lecture.images,
-            description: lecture.description,
-            thumbnail: lecture.thumbnail,
-            teacher_nickname: lecture.teacher_nickname,
-            expired: lecture.expired,
-            tags,
-            video_title: lecture.video_title,
-            video_url: lecture.video_url,
-          });
+        await prevPromise.then();
+        const tags = await this.lectureTagsRepository
+          .createQueryBuilder('lecture_tag')
+          .innerJoin('lecture_tag.lecture', 'lecture')
+          .innerJoin('lecture_tag.tag', 'tag')
+          .where('lecture.id = :lectureId', { lectureId: lecture.id })
+          .select(['tag.id AS id', 'tag.name AS name'])
+          .orderBy('tag.name', 'DESC')
+          .getRawMany();
+        responseLectures.push({
+          id: lecture.id,
+          title: lecture.title,
+          images: lecture.images,
+          description: lecture.description,
+          thumbnail: lecture.thumbnail,
+          teacher_nickname: lecture.teacher_nickname,
+          expired: lecture.expired,
+          tags,
+          video_title: lecture.video_title,
+          video_url: lecture.video_url,
         });
       }, Promise.resolve());
       return responseLectures;
@@ -497,31 +496,30 @@ export class LecturesService {
         .getRawMany();
       const responseApprovedLectures = [];
       await lectureOnStatuses.reduce(async (prevPromise, lecture) => {
-        return prevPromise.then(async () => {
-          const tags = await this.lectureTagsRepository
-            .createQueryBuilder('lecture_tag')
-            .innerJoin('lecture_tag.lecture', 'lecture')
-            .innerJoin('lecture_tag.tag', 'tag')
-            .where('lecture.id = :lectureId', { lectureId: lecture.id })
-            .select(['tag.id AS id', 'tag.name AS name'])
-            .orderBy('tag.name', 'DESC')
-            .getRawMany();
-          const currentTimestamp = new Date().toISOString();
-          const expiredTimestamp = new Date(lecture.expired).toISOString();
-          const status = !lecture.status
-            ? null
-            : expiredTimestamp < currentTimestamp
-            ? 'expired'
-            : lecture.status;
-          responseApprovedLectures.push({
-            id: lecture.id,
-            title: lecture.title,
-            thumbnail: lecture.thumbnail,
-            teacher_nickname: lecture.teacher_nickname,
-            status,
-            expired: lecture.expired,
-            tags,
-          });
+        await prevPromise.then();
+        const tags = await this.lectureTagsRepository
+          .createQueryBuilder('lecture_tag')
+          .innerJoin('lecture_tag.lecture', 'lecture')
+          .innerJoin('lecture_tag.tag', 'tag')
+          .where('lecture.id = :lectureId', { lectureId: lecture.id })
+          .select(['tag.id AS id', 'tag.name AS name'])
+          .orderBy('tag.name', 'DESC')
+          .getRawMany();
+        const currentTimestamp = new Date().toISOString();
+        const expiredTimestamp = new Date(lecture.expired).toISOString();
+        const status = !lecture.status
+          ? null
+          : expiredTimestamp < currentTimestamp
+          ? 'expired'
+          : lecture.status;
+        responseApprovedLectures.push({
+          id: lecture.id,
+          title: lecture.title,
+          thumbnail: lecture.thumbnail,
+          teacher_nickname: lecture.teacher_nickname,
+          status,
+          expired: lecture.expired,
+          tags,
         });
       }, Promise.resolve());
       return responseApprovedLectures;
@@ -769,12 +767,12 @@ export class LecturesService {
         .orderBy('tag.id', 'DESC')
         .getRawMany();
       await existTags.reduce(async (prevPromise, existTag) => {
-        await prevPromise;
+        await prevPromise.then();
         const result = await this.lectureTagsRepository.delete({
           lecture: { id: +pathParam.lectureId },
           tag: { id: existTag.id },
         });
-        if (!(!!result && result.affected === 1)) {
+        if (!(result && result.affected === 1)) {
           throw new HttpException(
             '이미 등록된 태그 삭제에 실패하였습니다',
             HttpStatus.UNPROCESSABLE_ENTITY,
@@ -782,12 +780,12 @@ export class LecturesService {
         }
       }, Promise.resolve());
       await ids.reduce(async (prevPromise, id) => {
-        await prevPromise;
+        await prevPromise.then();
         const result = await this.lectureTagsRepository.save({
           lecture: { id: +pathParam.lectureId },
           tag: { id: +id },
         });
-        if (!!!result) {
+        if (!result) {
           throw new HttpException(
             '태그를 강의에 등록하는 중 오류가 발생하였습니다',
             HttpStatus.UNPROCESSABLE_ENTITY,
