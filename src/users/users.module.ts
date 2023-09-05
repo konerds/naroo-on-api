@@ -24,9 +24,12 @@ config();
         },
       }),
     }),
-    MailgunModule.forRoot({
-      username: 'api',
-      key: process.env.MAILGUN_KEY,
+    MailgunModule.forAsyncRoot({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        username: 'api',
+        key: configService.get<string>('MAILGUN_KEY'),
+      }),
     }),
     TypeOrmModule.forFeature([User]),
   ],

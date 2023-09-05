@@ -24,7 +24,9 @@
 | FRONT_URL            | Frontend Web Service URL                                                                                                                       |
 | DATABASE_URL         | PostgreSQL Database Access Credentials<br/>(eg. **postgres://[ID]:[PASSWORD]@[HOST]:[PORT]/[DBNAME]**)                                         |
 | IS_SYNC              | If 'Y', will be set TypeORM-Force-Sync-Opt to true                                                                                             |
-| PASSWORD_FIRST_ADMIN | Password of Auto-Generated-Admin-Account When sync-mode                                                                                        |
+| IS_CREATE_ADMIN      | If 'Y', Admin-Account will be created                                                                                                          |
+| EMAIL_FIRST_ADMIN    | Email of Auto-Generated-Admin-Account When sync-mode<br/>(default: admin@test.com)                                                             |
+| PASSWORD_FIRST_ADMIN | Password of Auto-Generated-Admin-Account When sync-mode<br/>(default: admin@test.com)                                                          |
 | MAILGUN_DOMAIN       | Domain of own service                                                                                                                          |
 | MAILGUN_KEY          | Mailgun Service Private Key                                                                                                                    |
 | MAILGUN_USER         | Mailgun Service Username                                                                                                                       |

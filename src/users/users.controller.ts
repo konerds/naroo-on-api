@@ -96,16 +96,12 @@ export class UsersController {
       introduce: string | null;
     },
   ) {
-    return this.usersService.updateUserInfoForAdmin(
-      param,
-      user,
-      updateUserInfoDto,
-    );
+    return this.usersService.updateUserInfoForAdmin(param, updateUserInfoDto);
   }
 
   @Delete('/admin/:userId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminUserGuard)
   deleteUser(@Param() param: { userId: string }, @GetUser() user: User) {
-    return this.usersService.deleteUser(param, user);
+    return this.usersService.deleteUser(param);
   }
 }

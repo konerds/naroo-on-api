@@ -15,8 +15,8 @@ const dailyOptions = (level: string) => {
   };
 };
 
-export const winstonLogger =
-  process.env.IS_SAVE_LOGFILE === 'Y'
+export const winstonLogger = (isSaveLogFile: boolean) => {
+  return isSaveLogFile
     ? WinstonModule.createLogger({
         transports: [
           new winston.transports.Console({
@@ -37,3 +37,4 @@ export const winstonLogger =
         ],
       })
     : undefined;
+};

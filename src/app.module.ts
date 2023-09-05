@@ -2,30 +2,34 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { LecturesModule } from './lectures/lectures.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { ResourcesModule } from './resources/resources.module';
-import { config } from 'dotenv';
-config();
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
+      ignoreEnvFile: process.env.NODE_ENV === 'production',
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      ...(process.env.NODE_ENV === 'production'
-        ? {
-            url: process.env.DATABASE_URL,
-            extra: { ssl: { rejectUnauthorized: false } },
-          }
-        : {
-            url: process.env.DATABASE_URL,
-          }),
-      autoLoadEntities: true,
-      synchronize: process.env.IS_SYNC === 'Y' ? true : false,
-      logging: true,
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        ...(configService.get('NODE_ENV') === 'production'
+          ? {
+              url: configService.get<string>('DATABASE_URL'),
+              extra: { ssl: { rejectUnauthorized: false } },
+            }
+          : {
+              url: configService.get<string>('DATABASE_URL_DEV'),
+            }),
+        autoLoadEntities: true,
+        synchronize:
+          configService.get<string>('IS_SYNC') === 'Y' ? true : false,
+        logging: true,
+      }),
     }),
     UsersModule,
     LecturesModule,

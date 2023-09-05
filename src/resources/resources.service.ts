@@ -36,8 +36,8 @@ export class ResourcesService {
         );
       }
       return { message: '리소스가 성공적으로 등록되었습니다' };
-    } catch (err) {
-      throw err;
+    } catch (e) {
+      throw e;
     }
   }
 
@@ -77,8 +77,8 @@ export class ResourcesService {
         );
       }
       return { message: '리소스가 성공적으로 업데이트되었습니다' };
-    } catch (err) {
-      throw err;
+    } catch (e) {
+      throw e;
     }
   }
 
@@ -97,8 +97,8 @@ export class ResourcesService {
           content_id: 'ASC',
         },
       });
-    } catch (err) {
-      throw err;
+    } catch (e) {
+      throw e;
     }
   }
 
@@ -113,8 +113,8 @@ export class ResourcesService {
           content_id: 'ASC',
         },
       });
-    } catch (err) {
-      throw err;
+    } catch (e) {
+      throw e;
     }
   }
 
@@ -155,8 +155,8 @@ export class ResourcesService {
         );
       }
       return { message: '리소스가 성공적으로 삭제되었습니다' };
-    } catch (err) {
-      throw err;
+    } catch (e) {
+      throw e;
     }
   }
 }

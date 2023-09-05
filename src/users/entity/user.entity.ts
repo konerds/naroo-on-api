@@ -8,7 +8,7 @@ export const CONST_ROLE_TYPE = {
   STUDENT: 'student',
 } as const;
 
-export type ROLE_TYPE = typeof CONST_ROLE_TYPE[keyof typeof CONST_ROLE_TYPE];
+export type ROLE_TYPE = (typeof CONST_ROLE_TYPE)[keyof typeof CONST_ROLE_TYPE];
 
 @Entity()
 export class User extends Common {

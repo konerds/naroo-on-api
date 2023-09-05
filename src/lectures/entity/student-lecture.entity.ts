@@ -19,7 +19,7 @@ export const CONST_LECTURE_STATUS = {
 } as const;
 
 export type LECTURE_STATUS =
-  typeof CONST_LECTURE_STATUS[keyof typeof CONST_LECTURE_STATUS];
+  (typeof CONST_LECTURE_STATUS)[keyof typeof CONST_LECTURE_STATUS];
 
 @Entity()
 export class StudentLecture {

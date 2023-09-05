@@ -13,11 +13,11 @@ import { catchError } from 'rxjs/operators';
 export class ErrorsInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      catchError((err) =>
+      catchError((e) =>
         throwError(() => {
-          console.error(err);
-          if (err instanceof HttpException) {
-            return err;
+          console.error(e);
+          if (e instanceof HttpException) {
+            return e;
           }
           return new HttpException(
             '서버 내부 오류가 발생하였습니다',

@@ -187,7 +187,6 @@ export class LecturesController {
   ) {
     return this.lecturesService.createNotice(
       pathParam,
-      user,
       requestTitleDescriptionDto,
     );
   }
