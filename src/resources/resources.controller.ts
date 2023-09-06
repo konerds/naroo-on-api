@@ -9,6 +9,7 @@ import {
   Query,
   UseGuards,
   UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../users/guard/jwt.guard';
 import { ResourcesService } from './resources.service';
@@ -16,6 +17,8 @@ import { RESOURCE_TYPE } from './entity/resource.entity';
 import { GetUser } from '../users/decorator/get-user.decorator';
 import { User } from '../users/entity/user.entity';
 import { ErrorsInterceptor } from '../interceptors/errors.interceptor';
+import { AdminUserGuard } from '../users/guard/admin-user.guard';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @Controller('resource')
 @UseInterceptors(ErrorsInterceptor)
@@ -23,42 +26,48 @@ export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminUserGuard)
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'content', maxCount: 1 }]))
   createResourceContent(
     @GetUser() user: User,
+    @UploadedFiles() files: Express.MulterS3.File[],
     @Body()
     requestCreateResourceContentDto: {
       type: RESOURCE_TYPE;
-      content: string;
+      content: any;
     },
   ) {
-    return this.resourcesService.createResourceContent(
-      user,
-      requestCreateResourceContentDto,
-    );
+    const { content } = JSON.parse(JSON.stringify(files));
+    return this.resourcesService.createResourceContent({
+      ...requestCreateResourceContentDto,
+      content: content[0].location,
+    });
   }
 
   @Put()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminUserGuard)
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'content', maxCount: 1 }]))
   updateResourceContent(
     @GetUser() user: User,
+    @UploadedFiles() files: Express.MulterS3.File[],
     @Body()
     requestUpdateResourceContentDto: {
       type: RESOURCE_TYPE;
       content_id: string;
-      content: string;
+      content: any;
     },
   ) {
-    return this.resourcesService.updateResourceContent(
-      user,
-      requestUpdateResourceContentDto,
-    );
+    const { content } = JSON.parse(JSON.stringify(files));
+    return this.resourcesService.updateResourceContent({
+      ...requestUpdateResourceContentDto,
+      content: content[0].location,
+    });
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AdminUserGuard)
   getAllResources(@GetUser() user: User) {
-    return this.resourcesService.getAllResources(user);
+    return this.resourcesService.getAllResources();
   }
 
   @Get('/:type')
@@ -73,6 +82,6 @@ export class ResourcesController {
     @Query() queryParam: { type: string },
     @GetUser() user: User,
   ) {
-    return this.resourcesService.deleteResource(pathParam, queryParam, user);
+    return this.resourcesService.deleteResource(pathParam, queryParam);
   }
 }

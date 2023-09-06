@@ -9,6 +9,7 @@ import {
   Query,
   UseGuards,
   UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../users/guard/jwt.guard';
 import { RequestCreateLectureDto } from './dto/request/request-create-lecture.dto';
@@ -30,6 +31,7 @@ import { RequestAnswerIdDto } from './dto/request/request-answer-id.dto';
 import { RequestNoticeIdDto } from './dto/request/request-notice-id.dto';
 import { RequestQuestionIdDto } from './dto/request/request-question-id.dto';
 import { ErrorsInterceptor } from '../interceptors/errors.interceptor';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @Controller('lecture')
 @UseInterceptors(ErrorsInterceptor)
@@ -38,21 +40,55 @@ export class LecturesController {
 
   @Post('/create')
   @UseGuards(AdminUserGuard)
-  createLecture(@Body() requestCreateLectureDto: RequestCreateLectureDto) {
-    return this.lecturesService.createLecture(requestCreateLectureDto);
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'thumbnail', maxCount: 1 },
+      { name: 'images[]', maxCount: 5 },
+    ]),
+  )
+  createLecture(
+    @UploadedFiles() files: Express.MulterS3.File[],
+    @Body() requestCreateLectureDto: RequestCreateLectureDto,
+  ) {
+    const { thumbnail } = JSON.parse(JSON.stringify(files));
+    const images = JSON.parse(JSON.stringify(files))['images[]'];
+    return this.lecturesService.createLecture({
+      ...requestCreateLectureDto,
+      thumbnail: thumbnail[0].location,
+      images: images.map((_e) => {
+        return _e.location;
+      }),
+    });
   }
 
   @Put('/admin/:lectureId')
   @UseGuards(AdminUserGuard)
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'thumbnail', maxCount: 1 },
+      { name: 'img_description', maxCount: 1 },
+    ]),
+  )
   updateLectureInfo(
     @Param() pathParam: RequestLectureIdDto,
+    @UploadedFiles() files: Express.MulterS3.File[],
     @Body()
     requestUpdateLectureInfoDto: RequestUpdateLectureInfoDto,
   ) {
-    return this.lecturesService.updateLectureInfo(
-      pathParam,
-      requestUpdateLectureInfoDto,
-    );
+    const { thumbnail, img_description } = JSON.parse(JSON.stringify(files));
+    return this.lecturesService.updateLectureInfo(pathParam, {
+      ...requestUpdateLectureInfoDto,
+      thumbnail:
+        !!thumbnail && thumbnail[0] && thumbnail[0].location
+          ? thumbnail[0].location
+          : requestUpdateLectureInfoDto.thumbnail,
+      img_description:
+        !!img_description &&
+        !!img_description[0] &&
+        !!img_description[0].location
+          ? img_description[0].location
+          : requestUpdateLectureInfoDto.img_description,
+    });
   }
 
   @Delete('/admin/:lectureId')

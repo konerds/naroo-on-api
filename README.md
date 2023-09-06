@@ -18,20 +18,24 @@
 
 > This project use dotenv library, and load .env file
 
-| Variable Name        | Description                                                                                                                                    |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| PORT                 | Port Number                                                                                                                                    |
-| FRONT_URL            | Frontend Web Service URL                                                                                                                       |
-| DATABASE_URL         | PostgreSQL Database Access Credentials<br/>(eg. **postgres://[ID]:[PASSWORD]@[HOST]:[PORT]/[DBNAME]**)                                         |
-| IS_SYNC              | If 'Y', will be set TypeORM-Force-Sync-Opt to true                                                                                             |
-| IS_CREATE_ADMIN      | If 'Y', Admin-Account will be created                                                                                                          |
-| EMAIL_FIRST_ADMIN    | Email of Auto-Generated-Admin-Account When sync-mode<br/>(default: admin@test.com)                                                             |
-| PASSWORD_FIRST_ADMIN | Password of Auto-Generated-Admin-Account When sync-mode<br/>(default: admin@test.com)                                                          |
-| MAILGUN_DOMAIN       | Domain of own service                                                                                                                          |
-| MAILGUN_KEY          | Mailgun Service Private Key                                                                                                                    |
-| MAILGUN_USER         | Mailgun Service Username                                                                                                                       |
-| JWT_SECRET           | Secret Key for Generate JWT Access Token                                                                                                       |
-| IS_SAVE_LOGFILE      | If 'Y', logs automatically stored as file in [workspace]/logs directory<br/>You might have to premake dir folder in workspace cuz of permisson |
+| Variable Name            | Description                                                                                                                                    |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| PORT                     | Port Number                                                                                                                                    |
+| FRONT_URL                | Frontend Web Service URL                                                                                                                       |
+| DATABASE_URL             | PostgreSQL Database Access Credentials<br/>(eg. **postgres://[ID]:[PASSWORD]@[HOST]:[PORT]/[DBNAME]**)                                         |
+| IS_SYNC                  | If 'Y', will be set TypeORM-Force-Sync-Opt to true                                                                                             |
+| IS_CREATE_ADMIN          | If 'Y', Admin-Account will be created                                                                                                          |
+| EMAIL_FIRST_ADMIN        | Email of Auto-Generated-Admin-Account When sync-mode<br/>(default: admin@test.com)                                                             |
+| PASSWORD_FIRST_ADMIN     | Password of Auto-Generated-Admin-Account When sync-mode<br/>(default: admin@test.com)                                                          |
+| REGION_S3_AWS            | Region of AWS S3 Storage Storage                                                                                                               |
+| ACCESS_KEY_ID_S3_AWS     | Access Key of AWS S3 Storage Storage                                                                                                           |
+| SECRET_ACCESS_KEY_S3_AWS | Secret Access Key of AWS S3 Storage Storage                                                                                                    |
+| BUCKET_S3_AWS            | Bucket of AWS S3 Storage Storage                                                                                                               |
+| MAILGUN_DOMAIN           | Domain of own service                                                                                                                          |
+| MAILGUN_KEY              | Mailgun Service Private Key                                                                                                                    |
+| MAILGUN_USER             | Mailgun Service Username                                                                                                                       |
+| JWT_SECRET               | Secret Key for Generate JWT Access Token                                                                                                       |
+| IS_SAVE_LOGFILE          | If 'Y', logs automatically stored as file in [workspace]/logs directory<br/>You might have to premake dir folder in workspace cuz of permisson |
 
 > **If your devops has alternative logging way, set IS_SAVE_LOGFILE to 'N'**
 

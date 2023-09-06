@@ -14,13 +14,11 @@ export class RequestCreateLectureDto {
   @IsNotEmpty({ message: '강의 설명을 입력해주세요' })
   description: string;
 
-  @IsString()
   @IsOptional()
-  thumbnail: string;
+  thumbnail: any;
 
-  @IsString({ each: true })
   @IsOptional({ each: true })
-  images: string[];
+  images: any[];
 
   @IsDateString()
   @IsOptional()

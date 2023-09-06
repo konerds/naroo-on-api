@@ -1,9 +1,8 @@
 import { IsDateString, IsOptional, IsString } from 'class-validator';
 
 export class RequestUpdateLectureInfoDto {
-  @IsString()
   @IsOptional()
-  thumbnail: string;
+  thumbnail: any;
 
   @IsDateString()
   @IsOptional()
@@ -25,9 +24,8 @@ export class RequestUpdateLectureInfoDto {
   @IsOptional()
   img_description_index: string;
 
-  @IsString()
   @IsOptional()
-  img_description: string;
+  img_description: any;
 
   @IsString()
   @IsOptional()

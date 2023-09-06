@@ -12,6 +12,8 @@ import { StudentLecture } from './entity/student-lecture.entity';
 import { Tag } from './entity/tag.entity';
 import { LecturesController } from './lectures.controller';
 import { LecturesService } from './lectures.service';
+import { factoryOptionMulterS3AWS } from '../common/factory/option-multer-s3-aws.factory';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -30,6 +32,10 @@ import { LecturesService } from './lectures.service';
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
       }),
+    }),
+    MulterModule.registerAsync({
+      useFactory: factoryOptionMulterS3AWS,
+      inject: [ConfigService],
     }),
   ],
   controllers: [LecturesController],

@@ -11,51 +11,27 @@ export class ResourcesService {
     private readonly resourcesRepository: Repository<Resource>,
   ) {}
 
-  async createResourceContent(
-    user: User,
-    requestCreateResourceContentDto: {
-      type: RESOURCE_TYPE;
-      content: string;
-    },
-  ) {
+  async createResourceContent(requestCreateResourceContentDto: {
+    type: RESOURCE_TYPE;
+    content: string;
+  }) {
     try {
-      if (
-        typeof user.role === typeof CONST_ROLE_TYPE &&
-        user.role !== CONST_ROLE_TYPE.ADMIN
-      ) {
-        throw new HttpException('관리자 권한이 없습니다', HttpStatus.FORBIDDEN);
-      }
-      const result = await this.resourcesRepository.save({
+      await this.resourcesRepository.save({
         type: requestCreateResourceContentDto.type,
         content: requestCreateResourceContentDto.content,
       });
-      if (!!!result) {
-        throw new HttpException(
-          '리소스 등록에 실패하였습니다',
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
-      }
       return { message: '리소스가 성공적으로 등록되었습니다' };
     } catch (e) {
       throw e;
     }
   }
 
-  async updateResourceContent(
-    user: User,
-    requestUpdateResourceContentDto: {
-      type: RESOURCE_TYPE;
-      content_id: string;
-      content: string;
-    },
-  ) {
+  async updateResourceContent(requestUpdateResourceContentDto: {
+    type: RESOURCE_TYPE;
+    content_id: string;
+    content: string;
+  }) {
     try {
-      if (
-        typeof user.role === typeof CONST_ROLE_TYPE &&
-        user.role !== CONST_ROLE_TYPE.ADMIN
-      ) {
-        throw new HttpException('관리자 권한이 없습니다', HttpStatus.FORBIDDEN);
-      }
       const resource = await this.resourcesRepository.findOne({
         where: {
           type: requestUpdateResourceContentDto.type,
@@ -69,27 +45,15 @@ export class ResourcesService {
         );
       }
       resource.content = requestUpdateResourceContentDto.content;
-      const result = await this.resourcesRepository.save(resource);
-      if (!!!result) {
-        throw new HttpException(
-          '리소스 업데이트에 실패하였습니다',
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
-      }
+      await this.resourcesRepository.save(resource);
       return { message: '리소스가 성공적으로 업데이트되었습니다' };
     } catch (e) {
       throw e;
     }
   }
 
-  async getAllResources(user: User) {
+  async getAllResources() {
     try {
-      if (
-        typeof user.role === typeof CONST_ROLE_TYPE &&
-        user.role !== CONST_ROLE_TYPE.ADMIN
-      ) {
-        throw new HttpException('관리자 권한이 없습니다', HttpStatus.FORBIDDEN);
-      }
       return await this.resourcesRepository.find({
         select: ['type', 'content_id', 'content'],
         order: {
@@ -121,15 +85,8 @@ export class ResourcesService {
   async deleteResource(
     pathParam: { content_id: string },
     queryParam: { type: string },
-    user: User,
   ) {
     try {
-      if (
-        typeof user.role === typeof CONST_ROLE_TYPE &&
-        user.role !== CONST_ROLE_TYPE.ADMIN
-      ) {
-        throw new HttpException('관리자 권한이 없습니다', HttpStatus.FORBIDDEN);
-      }
       const resource = await this.resourcesRepository.findOne({
         where: {
           type: queryParam.type as RESOURCE_TYPE,
