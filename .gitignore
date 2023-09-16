@@ -46,3 +46,6 @@ package-lock.json
 # GCP
 app.yaml
 package-gcp.json
+
+# HTTP Request Test
+.http
