@@ -48,4 +48,4 @@ app.yaml
 package-gcp.json
 
 # HTTP Request Test
-.http
+*.http
