@@ -24,6 +24,7 @@ import { ResourcesModule } from './resources/resources.module';
             }
           : {
               url: configService.get<string>('DATABASE_URL_DEV'),
+              extra: { ssl: { rejectUnauthorized: false } },
             }),
         autoLoadEntities: true,
         synchronize:

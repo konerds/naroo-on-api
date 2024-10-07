@@ -58,7 +58,7 @@ export class UsersService implements OnModuleInit {
   }
 
   async onModuleInit() {
-    if (this.configService.get<string>('IS_CREATE_ADMIN') === 'Y') {
+    if ((this.configService.get<string>('IS_CREATE_ADMIN') || 'Y') === 'Y') {
       await this.createAdminUser();
     }
   }

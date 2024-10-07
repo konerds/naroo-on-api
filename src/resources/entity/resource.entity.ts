@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { WithTimestamps } from '../../common/entity/with-timestamps.entity';
 
 const CONST_RESOURCE_TYPE = {
   ADMIN_EMAIL: 'admin_email',
@@ -9,13 +10,11 @@ const CONST_RESOURCE_TYPE = {
 } as const;
 
 export type RESOURCE_TYPE =
-  typeof CONST_RESOURCE_TYPE[keyof typeof CONST_RESOURCE_TYPE];
+  (typeof CONST_RESOURCE_TYPE)[keyof typeof CONST_RESOURCE_TYPE];
 
 @Entity()
-export class Resource {
-  @PrimaryColumn('enum', {
-    enum: CONST_RESOURCE_TYPE,
-  })
+export class Resource extends WithTimestamps {
+  @Column('varchar', { nullable: false })
   type: RESOURCE_TYPE;
 
   @PrimaryGeneratedColumn()

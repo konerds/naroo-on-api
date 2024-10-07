@@ -7,7 +7,7 @@ export class Answer extends Common {
   @OneToOne(() => Question, (question) => question.answer, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn()
+  @JoinColumn({ name: 'questionId' })
   question: Question;
 
   @Column('varchar')

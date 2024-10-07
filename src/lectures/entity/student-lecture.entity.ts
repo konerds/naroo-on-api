@@ -1,14 +1,7 @@
 import { Lecture } from './lecture.entity';
 import { User } from '../../users/entity/user.entity';
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Common } from '../../common/entity/common.entity';
 
 export const CONST_LECTURE_STATUS = {
   APPLY: 'apply',
@@ -22,38 +15,22 @@ export type LECTURE_STATUS =
   (typeof CONST_LECTURE_STATUS)[keyof typeof CONST_LECTURE_STATUS];
 
 @Entity()
-export class StudentLecture {
-  @PrimaryColumn()
-  userId: string;
-
-  @PrimaryColumn()
-  lectureId: string;
-
+export class StudentLecture extends Common {
   @ManyToOne(() => User, (user) => user.studentLectures, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
-  @JoinColumn()
+  @JoinColumn({ name: 'userId' })
   user: User;
 
   @ManyToOne(() => Lecture, (lecture) => lecture.studentLectures, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
-  @JoinColumn()
+  @JoinColumn({ name: 'lectureId' })
   lecture: Lecture;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @CreateDateColumn()
-  updatedAt: Date;
-
-  @DeleteDateColumn()
-  deletedAt: Date;
-
-  @Column('enum', {
-    enum: CONST_LECTURE_STATUS,
+  @Column('varchar', {
     default: null,
     nullable: true,
   })

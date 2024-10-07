@@ -1,38 +1,21 @@
 import { Lecture } from './lecture.entity';
-import {
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryColumn,
-} from 'typeorm';
+import { Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Tag } from './tag.entity';
+import { Common } from '../../common/entity/common.entity';
 
 @Entity()
-export class LectureTag {
-  @PrimaryColumn()
-  lectureId: string;
-
-  @PrimaryColumn()
-  tagId: string;
-
+export class LectureTag extends Common {
   @ManyToOne(() => Lecture, (lecture) => lecture.lectureTags, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
-  @JoinColumn()
+  @JoinColumn({ name: 'lectureId' })
   lecture: Lecture;
 
   @ManyToOne(() => Tag, (tag) => tag.lectureTags, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
-  @JoinColumn()
+  @JoinColumn({ name: 'tagId' })
   tag: Tag;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @CreateDateColumn()
-  updatedAt: Date;
 }

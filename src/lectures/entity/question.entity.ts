@@ -7,11 +7,11 @@ import { Answer } from './answer.entity';
 @Entity()
 export class Question extends Common {
   @ManyToOne(() => Lecture, (lecture) => lecture.questions)
-  @JoinColumn()
+  @JoinColumn({ name: 'lectureId' })
   lecture: Lecture;
 
   @ManyToOne(() => User, (user) => user.questions)
-  @JoinColumn()
+  @JoinColumn({ name: 'studentId' })
   student: User;
 
   @Column('varchar')

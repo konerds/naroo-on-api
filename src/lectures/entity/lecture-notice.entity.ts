@@ -1,17 +1,14 @@
 import { Common } from '../../common/entity/common.entity';
 import { Lecture } from './lecture.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity()
 export class LectureNotice extends Common {
-  @PrimaryColumn()
-  lectureId: string;
-
   @ManyToOne(() => Lecture, (lecture) => lecture.lectureNotices, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
-  @JoinColumn()
+  @JoinColumn({ name: 'lectureId' })
   lecture: Lecture;
 
   @Column('varchar')

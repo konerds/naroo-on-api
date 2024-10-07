@@ -24,7 +24,7 @@ export class User extends Common {
   @Column('varchar', { unique: true })
   phone: string;
 
-  @Column('enum', { enum: CONST_ROLE_TYPE, default: CONST_ROLE_TYPE.STUDENT })
+  @Column('varchar', { default: CONST_ROLE_TYPE.STUDENT })
   role: ROLE_TYPE;
 
   @Column('boolean', { default: false })
